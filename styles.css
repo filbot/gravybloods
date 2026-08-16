@@ -2,7 +2,7 @@
 
 body {
   /* seamless 324x324 blue plasma tile from an archived 90s background set */
-  background: #00000b url("assets/vintage/bg-blue.jpg") repeat;
+  background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
   color: #e8e4d8;
   font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
   font-size: 15px;
@@ -30,7 +30,7 @@ hr { border: 0; border-top: 2px groove #8b0000; margin: 14px 0; }
 
 /* ---- the banner frame ---- */
 .banner {
-  background: #00000b url("assets/vintage/bg-blue.jpg") repeat;
+  background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
   text-align: center;
   padding: 0;
   overflow: hidden;
@@ -46,7 +46,7 @@ hr { border: 0; border-top: 2px groove #8b0000; margin: 14px 0; }
 
 /* ---- the nav frame ---- */
 .nav {
-  background: #00000b url("assets/vintage/bg-blue.jpg") repeat;
+  background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
   padding: 6px;
 }
 .nav a {
