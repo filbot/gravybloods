@@ -1,0 +1,12 @@
+.DS_Store
+
+# AI assistant files — kept local, never pushed
+.claude/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.cursor/
+.cursorrules
+.github/copilot-instructions.md
+.aider*
+.codex/
