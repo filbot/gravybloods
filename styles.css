@@ -1,14 +1,63 @@
 /* GRAVY BLOODS M/C -- official style sheet -- do not steal!!! */
 
+/* ---------------------------------------------------------------
+   LAYOUT
+   The old <frameset> is rebuilt here in flexbox: a fixed banner, a
+   fixed nav column, and a content pane that scrolls on its own --
+   the same behaviour frames gave us, except this one can reflow.
+   --------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-  /* seamless 324x324 blue plasma tile from an archived 90s background set */
+  /* seamless 324x324 blue plasma tile from an archived 90s background set.
+     One tile behind all three regions -- frames could never do that. */
   background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
   color: #e8e4d8;
   font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
   font-size: 15px;
   margin: 0;
-  padding: 10px;
+  padding: 0;
 }
+
+.site {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh; /* dvh keeps mobile browser chrome from clipping the page */
+}
+
+.banner {
+  flex: 0 0 auto;
+  text-align: center;
+  border-bottom: 4px ridge #8b0000;
+  overflow: hidden;
+}
+
+.cols {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0; /* without this the flex children refuse to scroll */
+}
+
+.nav {
+  flex: 0 0 190px;
+  padding: 8px 7px;
+  overflow-y: auto;
+  border-right: 4px ridge #8b0000;
+}
+
+.main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 10px 14px 24px;
+}
+
+img { max-width: 100%; }
+
+/* ---------------------------------------------------------------
+   TYPE
+   --------------------------------------------------------------- */
 
 a { color: #ffcc00; }
 a:visited { color: #ff8800; }
@@ -22,19 +71,18 @@ h1, h2, h3 {
   text-shadow: 2px 2px 0 #000, 0 0 12px #ff6600;
   margin: 12px 0 8px;
 }
-h1 { font-size: 34px; }
-h2 { font-size: 26px; }
-h3 { font-size: 19px; color: #ffcc00; }
+/* clamp() keeps the headings from blowing out a 320px screen while
+   leaving them full size on desktop */
+h1 { font-size: clamp(24px, 6vw, 34px); }
+h2 { font-size: clamp(20px, 4.5vw, 26px); }
+h3 { font-size: clamp(17px, 3.5vw, 19px); }
 
 hr { border: 0; border-top: 2px groove #8b0000; margin: 14px 0; }
 
-/* ---- the banner frame ---- */
-.banner {
-  background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
-  text-align: center;
-  padding: 0;
-  overflow: hidden;
-}
+/* ---------------------------------------------------------------
+   BANNER + NAV
+   --------------------------------------------------------------- */
+
 /* native 102x99 -- kept at native height so the pixels stay crisp */
 .banner-skull {
   height: 99px;
@@ -44,11 +92,6 @@ hr { border: 0; border-top: 2px groove #8b0000; margin: 14px 0; }
 }
 .banner-row { padding: 5px 0 3px; }
 
-/* ---- the nav frame ---- */
-.nav {
-  background: #00000b url("assets/vintage/bg-blue.jpg") repeat fixed;
-  padding: 6px;
-}
 .nav a {
   display: block;
   font-family: Impact, "Arial Black", sans-serif;
@@ -58,25 +101,26 @@ hr { border: 0; border-top: 2px groove #8b0000; margin: 14px 0; }
   color: #ffcc00;
   background: #1a0000;
   border: 3px outset #8b0000;
-  padding: 7px 4px;
+  padding: 9px 4px;
   margin-bottom: 7px;
   text-align: center;
   text-shadow: 1px 1px 0 #000;
+  min-height: 44px; /* 44px is the accessible minimum touch target */
 }
-.nav a:hover {
-  color: #fff;
-  background: #8b0000;
-  border-style: inset;
-}
+.nav a:hover { color: #fff; background: #8b0000; border-style: inset; }
 .nav-skull { display: block; margin: 0 auto 8px; width: 74px; }
+.nav-note { text-align: center; font-size: 11px; color: #7f9aa6; }
 
-/* ---- classic 90s furniture ---- */
+/* ---------------------------------------------------------------
+   CLASSIC 90s FURNITURE
+   --------------------------------------------------------------- */
+
 .blink { animation: blink 0.8s steps(1, end) infinite; }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
 .rainbow {
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: 20px;
+  font-size: clamp(15px, 3.6vw, 20px);
   letter-spacing: 1px;
   background: linear-gradient(90deg, #ff0000, #ff8800, #ffee00, #ff8800, #ff0000);
   background-size: 200% 100%;
@@ -91,7 +135,7 @@ marquee { background: #1a0000; border: 2px ridge #8b0000; padding: 4px 0; }
 
 /* 600x82 vintage flaming-line divider, repeated for wide viewports. */
 .flames {
-  height: 52px;
+  height: clamp(30px, 7vw, 52px);
   margin: 12px 0;
   background: url("assets/vintage/flaming-line.gif") repeat-x center bottom;
   background-size: auto 100%;
@@ -106,12 +150,22 @@ marquee { background: #1a0000; border: 2px ridge #8b0000; padding: 4px 0; }
   margin: 14px 0;
 }
 
+/* Wide tables scroll inside their own box rather than blowing out the
+   page -- the table keeps its columns, the layout keeps its width. */
+.tablewrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 table.roster {
   border: 4px outset #8b0000;
   border-collapse: separate;
   background: #060f14;
   width: 100%;
 }
+/* Only the prose-heavy 4-column roster needs a floor -- squeezed below this
+   the last column wraps to a dozen lines and the rows become towers.
+   Narrow tables stay unconstrained so they never scroll needlessly. */
+table.roster.wide { min-width: 640px; }
 table.roster th {
   background: #8b0000;
   color: #ffcc00;
@@ -121,10 +175,7 @@ table.roster th {
   padding: 5px 8px;
   text-align: left;
 }
-table.roster td {
-  border: 2px inset #3a1010;
-  padding: 5px 8px;
-}
+table.roster td { border: 2px inset #3a1010; padding: 5px 8px; }
 table.roster tr:nth-child(even) td { background: #0e1c25; }
 
 /* hit counter -- a real 1999 counter GIF, fixed digits and all.
@@ -147,7 +198,7 @@ table.roster tr:nth-child(even) td { background: #0e1c25; }
   border: 2px outset #666;
   background: #222;
   color: #ddd;
-  padding: 4px 7px;
+  padding: 6px 9px;
   margin: 3px;
   text-decoration: none;
 }
@@ -158,19 +209,19 @@ table.roster tr:nth-child(even) td { background: #0e1c25; }
   background: #0e1c25;
   padding: 8px 10px;
   margin-bottom: 10px;
+  overflow-wrap: break-word; /* stop a long pasted URL widening the page */
 }
 .guestbook-entry .who { color: #ff6600; font-weight: bold; }
 .guestbook-entry .when { color: #7f9aa6; font-size: 12px; }
 
 input[type="text"], textarea {
   font-family: "Courier New", monospace;
-  font-size: 13px;
+  font-size: 16px; /* under 16px iOS auto-zooms the whole page on focus */
   background: #000;
   color: #00ff00;
   border: 2px inset #666;
-  padding: 4px;
+  padding: 6px;
   width: 100%;
-  box-sizing: border-box;
 }
 input[type="submit"] {
   font-family: Impact, "Arial Black", sans-serif;
@@ -179,16 +230,69 @@ input[type="submit"] {
   color: #ffcc00;
   background: #8b0000;
   border: 3px outset #c00;
-  padding: 6px 18px;
+  padding: 10px 22px;
+  min-height: 44px;
   cursor: pointer;
 }
 input[type="submit"]:active { border-style: inset; }
 
-.footer {
-  text-align: center;
-  font-size: 12px;
-  color: #7f9aa6;
-  margin-top: 18px;
+.footer { text-align: center; font-size: 12px; color: #7f9aa6; margin-top: 18px; }
+.construction { display: block; margin: 10px auto; }
+.swatch { width: 60px; }
+
+/* ---------------------------------------------------------------
+   TABLET -- narrow the nav column before it starts crowding content
+   --------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .nav { flex-basis: 150px; }
+  .nav a { font-size: 14px; letter-spacing: 0; }
 }
 
-.construction { display: block; margin: 10px auto; }
+/* ---------------------------------------------------------------
+   MOBILE -- unstack the "frames" into one ordinary scrolling page
+   and turn the nav column into a wrapping row of buttons.
+   --------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .site { height: auto; min-height: 100dvh; }
+  .cols { display: block; }
+
+  .nav {
+    flex: none;
+    border-right: 0;
+    border-bottom: 4px ridge #8b0000;
+    overflow: visible;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+  }
+  .nav a {
+    flex: 1 1 44%; /* two per row, wrapping to one on the narrowest phones */
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-skull, .nav-note, .nav hr { display: none; } /* nav is a toolbar now */
+
+  .main { overflow: visible; padding: 8px 10px 20px; }
+  .banner-skull { height: 74px; }
+  .box { padding: 8px 10px; }
+
+  /* the tile is fixed on desktop, but iOS Safari handles fixed
+     backgrounds badly -- let it scroll on small screens instead */
+  body { background-attachment: scroll; }
+}
+
+@media (max-width: 380px) {
+  .nav a { flex-basis: 100%; }
+}
+
+/* Respect a reader's reduced-motion setting: kill the blink and the
+   rainbow slide. The GIFs stay -- they are the point of the site. */
+@media (prefers-reduced-motion: reduce) {
+  .blink, .rainbow { animation: none; }
+  .blink { opacity: 1; }
+}

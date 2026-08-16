@@ -2,79 +2,124 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gravy Bloods M/C :: Guest Book</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="site">
 
-<div class="flames"></div>
+  <header class="banner">
+    <div class="banner-row">
+      <img class="banner-skull vintage" src="assets/vintage/skull-3.gif" alt="Gravy Bloods Motorcycle Club">
+    </div>
+    <marquee scrollamount="6" behavior="scroll" direction="left">
+      <span class="rainbow">&#9760; WELCOME TO THE OFFICIAL GRAVY BLOODS M/C HOME PAGE &#9760;</span>
+      &nbsp;&nbsp;&#128293;&nbsp;&nbsp;
+      <img class="vintage" src="assets/vintage/new-fire.gif" alt="NEW!" height="28">
+      <span>Sunday's Thunder Gravy Run photos are UP &mdash; 47 bikes, zero breakdowns, one blown gasket</span>
+      &nbsp;&nbsp;&#128293;&nbsp;&nbsp;
+      <span>Guest book is OPEN &mdash; sign it or ride on</span>
+      &nbsp;&nbsp;&#128293;&nbsp;&nbsp;
+      <span>This site looks best in Netscape Navigator 4.0 at 800x600</span>
+    </marquee>
+  </header>
 
-<center>
-  <h1>&#128221; GUEST BOOK &#128221;</h1>
-  <img class="vintage" src="assets/vintage/eyeball.gif" alt="" height="50">
-  <p class="blink" style="color:#ffcc00;font-weight:bold;">SIGN IT OR RIDE ON!!</p>
-</center>
+  <div class="cols">
 
-<div class="box">
-  <h2>Sign The Book</h2>
-  <form id="gbform">
-    <p><b>Your Road Name:</b><br><input type="text" id="who" maxlength="40" required></p>
-    <p><b>Where You Ride From:</b><br><input type="text" id="where" maxlength="40"></p>
-    <p><b>Your Message:</b><br><textarea id="msg" rows="4" maxlength="500" required></textarea></p>
-    <center><input type="submit" value="SIGN THE BOOK"></center>
-  </form>
-  <p style="font-size:11px;color:#7f9aa6;">
-    Entries are saved in your browser only &mdash; Greasy Pete has not figured out the
-    CGI script yet. He says it is on the list.
-  </p>
-</div>
+    <nav class="nav">
+      <img class="nav-skull vintage" src="assets/vintage/skull-hot.gif" alt="">
+      <a href="index.html">HOME</a>
+      <a href="crew.html">THE CREW</a>
+      <a href="rides.html">RIDES</a>
+      <a href="colors.html">OUR COLORS</a>
+      <a href="guestbook.html" aria-current="page">GUEST BOOK</a>
+      <a href="links.html">HOT LINKS</a>
+      <a href="mailto:prez@gravybloods.example">
+        <img class="vintage" src="assets/vintage/mailbox.gif" alt="" height="26"> E-MAIL THE PREZ</a>
+      <hr>
+      <p class="nav-note">
+        <span class="blink" style="color:#ff3300;font-weight:bold;">&#9888; SITE UPDATED &#9888;</span><br>
+        <b style="color:#ffcc00;">08 / 16 / 99</b><br><br>
+        Sign the book!<br>
+        Ride or wrench.
+      </p>
+    </nav>
 
-<div class="flames"></div>
+    <main class="main">
 
-<div class="box">
-  <h2>Previous Entries</h2>
-  <div id="entries"></div>
+      <div class="flames"></div>
 
-  <div class="guestbook-entry">
-    <div class="who">Handlebar Hank <span class="when">&mdash; Aug 12, 1999 11:04 PM &mdash; Ohio</span></div>
-    <p>Rode with you boys on the Thunder Gravy Run as a guest. Best organized run I
-    have been on in twenty years. That gravy is no joke either.</p>
+      <center>
+        <h1>&#128221; GUEST BOOK &#128221;</h1>
+        <img class="vintage" src="assets/vintage/eyeball.gif" alt="" height="50">
+        <p class="blink" style="color:#ffcc00;font-weight:bold;">SIGN IT OR RIDE ON!!</p>
+      </center>
+
+      <div class="box">
+        <h2>Sign The Book</h2>
+        <form id="gbform">
+          <p><b>Your Road Name:</b><br><input type="text" id="who" maxlength="40" required></p>
+          <p><b>Where You Ride From:</b><br><input type="text" id="where" maxlength="40"></p>
+          <p><b>Your Message:</b><br><textarea id="msg" rows="4" maxlength="500" required></textarea></p>
+          <center><input type="submit" value="SIGN THE BOOK"></center>
+        </form>
+        <p style="font-size:11px;color:#7f9aa6;">
+          Entries are saved in your browser only &mdash; Greasy Pete has not figured out the
+          CGI script yet. He says it is on the list.
+        </p>
+      </div>
+
+      <div class="flames"></div>
+
+      <div class="box">
+        <h2>Previous Entries</h2>
+        <div id="entries"></div>
+
+        <div class="guestbook-entry">
+          <div class="who">Handlebar Hank <span class="when">&mdash; Aug 12, 1999 11:04 PM &mdash; Ohio</span></div>
+          <p>Rode with you boys on the Thunder Gravy Run as a guest. Best organized run I
+          have been on in twenty years. That gravy is no joke either.</p>
+        </div>
+
+        <div class="guestbook-entry">
+          <div class="who">Sheila K. <span class="when">&mdash; Aug 09, 1999 4:47 PM &mdash; down the road</span></div>
+          <p>My son's bike broke down on Route 9 last month and two of your guys stopped
+          and stayed with him for three hours until the tow came. I don't know their names.
+          Thank you.</p>
+        </div>
+
+        <div class="guestbook-entry">
+          <div class="who">Greasy Pete <span class="when">&mdash; Aug 02, 1999 2:15 AM &mdash; the garage</span></div>
+          <p>TESTING TESTING does this thing work. If you can read this it works.
+          Dunkums stop asking me if it works.</p>
+        </div>
+
+        <div class="guestbook-entry">
+          <div class="who">cooldude1999 <span class="when">&mdash; Jul 28, 1999 6:33 PM &mdash; ~*~ cyberspace ~*~</span></div>
+          <p>SICK PAGE!!! the skulls are AWESOME. check out my page its got frames too</p>
+        </div>
+
+        <div class="guestbook-entry">
+          <div class="who">Two-Stroke Terri <span class="when">&mdash; Jul 21, 1999 9:12 AM &mdash; the valley</span></div>
+          <p>Reminder that dues were due in June. You know who you are. I have a list.</p>
+        </div>
+      </div>
+
+      <center>
+        <p style="font-size:12px;color:#7f9aa6;">
+          <b style="color:#ffcc00;">1,204</b> people have signed this book.<br>
+          Keep it clean. Filip reads this page.
+        </p>
+      </center>
+
+      <div class="footer">
+        <hr>
+        &copy; 1999 Gravy Bloods M/C &nbsp;|&nbsp; <a href="index.html">Back to Home</a>
+      </div>
+
+    </main>
   </div>
-
-  <div class="guestbook-entry">
-    <div class="who">Sheila K. <span class="when">&mdash; Aug 09, 1999 4:47 PM &mdash; down the road</span></div>
-    <p>My son's bike broke down on Route 9 last month and two of your guys stopped
-    and stayed with him for three hours until the tow came. I don't know their names.
-    Thank you.</p>
-  </div>
-
-  <div class="guestbook-entry">
-    <div class="who">Greasy Pete <span class="when">&mdash; Aug 02, 1999 2:15 AM &mdash; the garage</span></div>
-    <p>TESTING TESTING does this thing work. If you can read this it works.
-    Dunkums stop asking me if it works.</p>
-  </div>
-
-  <div class="guestbook-entry">
-    <div class="who">cooldude1999 <span class="when">&mdash; Jul 28, 1999 6:33 PM &mdash; ~*~ cyberspace ~*~</span></div>
-    <p>SICK PAGE!!! the skulls are AWESOME. check out my page its got frames too</p>
-  </div>
-
-  <div class="guestbook-entry">
-    <div class="who">Two-Stroke Terri <span class="when">&mdash; Jul 21, 1999 9:12 AM &mdash; the valley</span></div>
-    <p>Reminder that dues were due in June. You know who you are. I have a list.</p>
-  </div>
-</div>
-
-<center>
-  <p style="font-size:12px;color:#7f9aa6;">
-    <b style="color:#ffcc00;">1,204</b> people have signed this book.<br>
-    Keep it clean. Filip reads this page.
-  </p>
-</center>
-
-<div class="footer">
-  <hr>
-  &copy; 1999 Gravy Bloods M/C &nbsp;|&nbsp; <a href="home.html">Back to Home</a>
 </div>
 
 <script>
@@ -114,6 +159,5 @@ document.getElementById('gbform').addEventListener('submit', function (ev) {
 
 render();
 </script>
-
 </body>
 </html>
