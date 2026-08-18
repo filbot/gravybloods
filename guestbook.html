@@ -35,7 +35,7 @@
       <a href="colors.html">OUR COLORS</a>
       <a href="guestbook.html" aria-current="page">GUEST BOOK</a>
       <a href="links.html">HOT LINKS</a>
-      <a href="mailto:prez@gravybloods.example">
+      <a href="mailto:filip@filbot.com">
         <img class="vintage" src="assets/vintage/mailbox.gif" alt="" height="26"> E-MAIL THE PREZ</a>
       <hr>
       <p class="nav-note">
@@ -58,15 +58,15 @@
 
       <div class="box">
         <h2>Sign The Book</h2>
-        <form id="gbform">
-          <p><b>Your Road Name:</b><br><input type="text" id="who" maxlength="40" required></p>
-          <p><b>Where You Ride From:</b><br><input type="text" id="where" maxlength="40"></p>
-          <p><b>Your Message:</b><br><textarea id="msg" rows="4" maxlength="500" required></textarea></p>
+        <form id="gbform" action="https://formsubmit.co/ajax/filip@filbot.com" method="post">
+          <p><b>Your Road Name:</b><br><input type="text" id="who" name="Road Name" maxlength="40" required></p>
+          <p><b>Where You Ride From:</b><br><input type="text" id="where" name="Rides From" maxlength="40"></p>
+          <p><b>Your Message:</b><br><textarea id="msg" name="Message" rows="4" maxlength="500" required></textarea></p>
           <center><input type="submit" value="SIGN THE BOOK"></center>
         </form>
         <p style="font-size:11px;color:#7f9aa6;">
-          Entries are saved in your browser only &mdash; Greasy Pete has not figured out the
-          CGI script yet. He says it is on the list.
+          Your entry shows up on this page in your browser and gets mailed to the
+          webmaster. Greasy Pete finally figured out the CGI script.
         </p>
       </div>
 
@@ -123,7 +123,8 @@
 </div>
 
 <script>
-// ponytail: localStorage guest book -- no server, so entries live in this browser only
+// ponytail: entries render from localStorage (this browser only) and POST to FormSubmit,
+// which mails them to the webmaster -- no backend to run
 var KEY = 'gbmc_guestbook';
 var list = document.getElementById('entries');
 
@@ -153,6 +154,16 @@ document.getElementById('gbform').addEventListener('submit', function (ev) {
       { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' })
   });
   localStorage.setItem(KEY, JSON.stringify(saved));
+  fetch(this.action, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      'Road Name': saved[0].who,
+      'Rides From': saved[0].where,
+      Message: saved[0].msg,
+      _subject: 'Gravy Bloods guest book: ' + saved[0].who
+    })
+  }).catch(function () {});
   this.reset();
   render();
 });
