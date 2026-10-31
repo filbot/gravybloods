@@ -5,10 +5,10 @@
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
   "routes": [{ "pattern": "gravybloods.com", "custom_domain": true }],
-  // Static pages come straight from the repo root; .assetsignore keeps the
-  // Worker source and config out of the public files. Only /api/* hits the Worker.
+  // Static pages come straight from public/, so nothing else in the repo can be
+  // published by accident. Only /api/* hits the Worker.
   "assets": {
-    "directory": ".",
+    "directory": "./public",
     "binding": "ASSETS",
     "run_worker_first": ["/api/*"]
   },
