@@ -1,17 +1,23 @@
 // Guest book API. Everything else on the site is static and served straight from
 // the assets binding; only /api/* runs this code (see run_worker_first in wrangler.jsonc).
 
+import { EmailMessage } from 'cloudflare:email';
+
 const LIMITS = { name: 40, rides_from: 40, message: 500 };
 const LINK = /https?:\/\/|www\.|<\s*a[\s>]|\[url|\.(com|net|org|ru|pl|es|de|nl|us|info|biz)\b/i;
 const COOLDOWN_SECONDS = 60;
 const PAGE_SIZE = 100;
+// NOTIFY_TO must match destination_address on the send_email binding in wrangler.jsonc,
+// and be a verified Email Routing destination. NOTIFY_FROM must be on gravybloods.com.
+const NOTIFY_FROM = 'guestbook@gravybloods.com';
+const NOTIFY_TO = 'filip@filbot.com';
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname !== '/api/guestbook') return env.ASSETS.fetch(request);
     if (request.method === 'GET') return listEntries(env);
-    if (request.method === 'POST') return signBook(request, env);
+    if (request.method === 'POST') return signBook(request, env, ctx);
     return json({ error: 'Method not allowed.' }, 405, { Allow: 'GET, POST' });
   },
 };
@@ -23,7 +29,7 @@ async function listEntries(env) {
   return json({ entries: results });
 }
 
-async function signBook(request, env) {
+async function signBook(request, env, ctx) {
   let form;
   try {
     form = await request.formData();
@@ -36,8 +42,8 @@ async function signBook(request, env) {
   if (field(form, 'website')) return json({ ok: true });
 
   const entry = {
-    name: field(form, 'name'),
-    rides_from: field(form, 'rides_from'),
+    name: oneLine(field(form, 'name')),
+    rides_from: oneLine(field(form, 'rides_from')),
     message: field(form, 'message'),
   };
   if (!entry.name || !entry.message) {
@@ -65,6 +71,8 @@ async function signBook(request, env) {
   await env.DB.prepare(
     'INSERT INTO entries (name, rides_from, message, ip_hash) VALUES (?, ?, ?, ?)'
   ).bind(entry.name, entry.rides_from, entry.message, ipHash).run();
+  // The entry is saved either way; a failed email only shows up in the Worker logs.
+  ctx.waitUntil(notify(entry, env).catch((err) => console.error('notify failed', err)));
   return json({ ok: true }, 201);
 }
 
@@ -82,9 +90,44 @@ async function turnstileOk(token, ip, env) {
   return outcome.success === true;
 }
 
+async function notify(entry, env) {
+  const signer = entry.name + (entry.rides_from ? ' from ' + entry.rides_from : '');
+  const text = signer + ' signed the guest book:\n\n' + entry.message +
+    '\n\nhttps://gravybloods.com/guestbook\n';
+  const raw = [
+    'From: Gravy Bloods Guest Book <' + NOTIFY_FROM + '>',
+    'To: ' + NOTIFY_TO,
+    'Subject: ' + encodeHeader('Guest book signed by ' + entry.name),
+    'Date: ' + new Date().toUTCString(),
+    'Message-ID: <' + crypto.randomUUID() + '@gravybloods.com>',
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=utf-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    base64(text).replace(/.{76}/g, '$&\r\n'),
+  ].join('\r\n');
+  await env.NOTIFY.send(new EmailMessage(NOTIFY_FROM, NOTIFY_TO, raw));
+}
+
+// RFC 2047 encoding keeps visitor text from adding or breaking mail headers.
+function encodeHeader(text) {
+  return '=?UTF-8?B?' + base64(text) + '?=';
+}
+
+function base64(text) {
+  let binary = '';
+  for (const byte of new TextEncoder().encode(text)) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
 function field(form, name) {
   const value = form.get(name);
   return typeof value === 'string' ? value.trim() : '';
+}
+
+// Name and hometown are single-line inputs; bots can still send line breaks.
+function oneLine(text) {
+  return text.replace(/\s+/g, ' ');
 }
 
 async function sha256(text) {

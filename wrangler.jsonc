@@ -19,6 +19,9 @@
       "database_id": "3fe66f35-14a3-448a-80fe-a3c67a5d954f"
     }
   ],
+  // New-entry notifications through Email Routing. The address must be a verified
+  // destination on the account, and must match NOTIFY_TO in src/worker.js.
+  "send_email": [{ "name": "NOTIFY", "destination_address": "filip@filbot.com" }],
   // TURNSTILE_SECRET is a Worker secret, set outside this file.
   "observability": { "enabled": true }
 }
