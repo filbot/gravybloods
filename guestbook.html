@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gravy Bloods M/C :: Guest Book</title>
 <link rel="stylesheet" href="styles.css">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <div class="site">
@@ -58,15 +59,18 @@
 
       <div class="box">
         <h2>Sign The Book</h2>
-        <form id="gbform" action="https://formsubmit.co/ajax/filip@filbot.com" method="post">
-          <p><b>Your Road Name:</b><br><input type="text" id="who" name="Road Name" maxlength="40" required></p>
-          <p><b>Where You Ride From:</b><br><input type="text" id="where" name="Rides From" maxlength="40"></p>
-          <p><b>Your Message:</b><br><textarea id="msg" name="Message" rows="4" maxlength="500" required></textarea></p>
+        <form id="gbform" action="/api/guestbook" method="post">
+          <p><b>Your Road Name:</b><br><input type="text" name="name" maxlength="40" required></p>
+          <p><b>Where You Ride From:</b><br><input type="text" name="rides_from" maxlength="40"></p>
+          <p><b>Your Message:</b><br><textarea name="message" rows="4" maxlength="500" required></textarea></p>
+          <p style="display:none;"><input type="text" name="website" tabindex="-1" autocomplete="off"></p>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAAFuWiaEt_V-aSMBN" data-theme="dark" data-size="flexible"></div>
           <center><input type="submit" value="SIGN THE BOOK"></center>
+          <p id="gbstatus" style="font-weight:bold;color:#ffcc00;" role="status"></p>
         </form>
         <p style="font-size:11px;color:#7f9aa6;">
-          Your entry shows up on this page in your browser and gets mailed to the
-          webmaster. Greasy Pete finally figured out the CGI script.
+          Everybody who visits can read your entry. No links, keep it clean.
+          Greasy Pete finally figured out the CGI script.
         </p>
       </div>
 
@@ -123,52 +127,57 @@
 </div>
 
 <script>
-// ponytail: entries render from localStorage (this browser only) and POST to FormSubmit,
-// which mails them to the webmaster -- no backend to run
-var KEY = 'gbmc_guestbook';
+// entries live in Cloudflare D1 behind /api/guestbook (src/worker.js), so every visitor sees them
 var list = document.getElementById('entries');
+var form = document.getElementById('gbform');
+var statusEl = document.getElementById('gbstatus');
 
 function esc(s) {
-  return s.replace(/[&<>"]/g, function (c) {
+  return String(s).replace(/[&<>"]/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
   });
 }
 
-function render() {
-  var saved = JSON.parse(localStorage.getItem(KEY) || '[]');
-  list.innerHTML = saved.map(function (e) {
-    return '<div class="guestbook-entry"><div class="who">' + esc(e.who) +
-      ' <span class="when">&mdash; ' + esc(e.when) +
-      (e.where ? ' &mdash; ' + esc(e.where) : '') + '</span></div><p>' + esc(e.msg) + '</p></div>';
-  }).join('');
+function when(iso) {
+  return new Date(iso).toLocaleString('en-US',
+    { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
-document.getElementById('gbform').addEventListener('submit', function (ev) {
-  ev.preventDefault();
-  var saved = JSON.parse(localStorage.getItem(KEY) || '[]');
-  saved.unshift({
-    who: document.getElementById('who').value,
-    where: document.getElementById('where').value,
-    msg: document.getElementById('msg').value,
-    when: new Date().toLocaleString('en-US',
-      { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-  });
-  localStorage.setItem(KEY, JSON.stringify(saved));
-  fetch(this.action, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      'Road Name': saved[0].who,
-      'Rides From': saved[0].where,
-      Message: saved[0].msg,
-      _subject: 'Gravy Bloods guest book: ' + saved[0].who
-    })
+function load() {
+  fetch('/api/guestbook').then(function (res) { return res.json(); }).then(function (data) {
+    list.innerHTML = data.entries.map(function (e) {
+      return '<div class="guestbook-entry"><div class="who">' + esc(e.name) +
+        ' <span class="when">&mdash; ' + esc(when(e.created_at)) +
+        (e.rides_from ? ' &mdash; ' + esc(e.rides_from) : '') + '</span></div><p>' +
+        esc(e.message) + '</p></div>';
+    }).join('');
   }).catch(function () {});
-  this.reset();
-  render();
+}
+
+form.addEventListener('submit', function (ev) {
+  ev.preventDefault();
+  var button = form.querySelector('input[type="submit"]');
+  button.disabled = true;
+  statusEl.textContent = 'Signing...';
+  fetch(form.action, { method: 'POST', body: new FormData(form) })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.error) {
+        statusEl.textContent = data.error;
+        return;
+      }
+      statusEl.textContent = 'Thanks for signing!';
+      form.reset();
+      load();
+    })
+    .catch(function () { statusEl.textContent = 'Something broke. Try again in a minute.'; })
+    .then(function () {
+      button.disabled = false;
+      if (window.turnstile) turnstile.reset();
+    });
 });
 
-render();
+load();
 </script>
 </body>
 </html>

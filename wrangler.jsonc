@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gravybloods",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "gravybloods.com", "custom_domain": true }],
+  // Static pages come straight from the repo root; .assetsignore keeps the
+  // Worker source and config out of the public files. Only /api/* hits the Worker.
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gravybloods-guestbook",
+      "database_id": "3fe66f35-14a3-448a-80fe-a3c67a5d954f"
+    }
+  ],
+  // TURNSTILE_SECRET is a Worker secret, set outside this file.
+  "observability": { "enabled": true }
+}
